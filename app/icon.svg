@@ -1,26 +1,31 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
   <defs>
+    <linearGradient id="bolt" x1="0.3" y1="0" x2="0.7" y2="1">
+      <stop offset="0%" stop-color="#FBB040"/>
+      <stop offset="100%" stop-color="#C96A00"/>
+    </linearGradient>
     <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="15" result="coloredBlur"/>
+      <feGaussianBlur stdDeviation="1.6" result="blur"/>
       <feMerge>
-        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="blur"/>
         <feMergeNode in="SourceGraphic"/>
       </feMerge>
     </filter>
+    <radialGradient id="bg-glow" cx="50%" cy="50%" r="55%">
+      <stop offset="0%" stop-color="#D97706" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#D97706" stop-opacity="0"/>
+    </radialGradient>
   </defs>
-  
-  <!-- Glowing A -->
-  <path d="M256 32 L32 480 L128 480 L176 384 L336 384 L384 480 L480 480 Z M256 128 L304 320 L208 320 Z" 
-        fill="none" 
-        stroke="#06B6D4" 
-        stroke-width="40" 
-        stroke-linejoin="round" 
-        filter="url(#glow)" />
-        
-  <path d="M256 32 L32 480 L128 480 L176 384 L336 384 L384 480 L480 480 Z M256 128 L304 320 L208 320 Z" 
-        fill="none" 
-        stroke="white" 
-        stroke-width="5" 
-        stroke-linejoin="round" 
-        opacity="0.8" />
+
+  <!-- Dark warm background -->
+  <rect width="32" height="32" rx="7" fill="#110F0D"/>
+  <!-- Subtle centre glow -->
+  <rect width="32" height="32" rx="7" fill="url(#bg-glow)"/>
+
+  <!-- Lightning bolt: classic Z-slash shape, chunky & clean -->
+  <polygon
+    points="19,2 10,17 15.5,17 13,30 22,15 16.5,15"
+    fill="url(#bolt)"
+    filter="url(#glow)"
+  />
 </svg>

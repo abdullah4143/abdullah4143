@@ -1,81 +1,161 @@
 "use client";
-import React from 'react';
-import { motion } from 'framer-motion';
-import { FileCode, ExternalLink, Github } from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import { ArrowUpRight, Lock } from "lucide-react";
 
 interface ProjectProps {
-    title: string;
-    description: string;
-    tags: string[];
-    repoUrl: string;
-    liveUrl: string;
-    size?: string;
+  title: string;
+  description: string;
+  tags: string[];
+  repoUrl: string;
+  liveUrl: string;
+  size?: string;
+  category?: string;
 }
 
-export default function ProjectCard({ title, description, tags, repoUrl, liveUrl }: ProjectProps) {
-    return (
-        <motion.div
-            whileHover={{ y: -5 }}
-            transition={{ duration: 0.3 }}
-            className="bg-[#0D1117] rounded-xl border border-white/10 overflow-hidden shadow-2xl group hover:border-cyan-500/50 flex flex-col h-full"
+export default function ProjectCard({
+  title,
+  description,
+  tags,
+  repoUrl,
+  liveUrl,
+  category,
+}: ProjectProps) {
+  const hasLiveUrl = liveUrl !== "STAGING_ONLY";
+  const hasRepoUrl = repoUrl !== "PRIVATE";
+  const href = hasLiveUrl ? liveUrl : hasRepoUrl ? repoUrl : null;
+
+  return (
+    <motion.article
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+      className="card-shimmer group relative flex flex-col h-full rounded-xl overflow-hidden"
+      style={{
+        background: "var(--paper-2)",
+        border: "1px solid var(--rule)",
+      }}
+      onMouseEnter={(e) => {
+        (e.currentTarget as HTMLElement).style.borderColor = "var(--accent)";
+        (e.currentTarget as HTMLElement).style.boxShadow =
+          "0 0 24px oklch(72% 0.20 48 / 0.18)";
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLElement).style.borderColor = "var(--rule)";
+        (e.currentTarget as HTMLElement).style.boxShadow = "none";
+      }}
+    >
+      {/* Accent top line */}
+      <div
+        className="h-px w-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        style={{
+          background:
+            "linear-gradient(90deg, transparent, var(--accent), transparent)",
+        }}
+      />
+
+      <div className="p-7 flex flex-col flex-1 gap-5">
+        {category && (
+          <p className="mono-kicker" style={{ color: "var(--accent)" }}>
+            {category}
+          </p>
+        )}
+
+        <h3
+          className="text-xl font-semibold leading-tight"
+          style={{
+            color: "var(--ink)",
+            fontFamily: "var(--font-inter), sans-serif",
+            letterSpacing: "-0.025em",
+          }}
         >
-            {/* Window Header */}
-            <div className="bg-white/5 px-4 py-3 flex items-center justify-between border-b border-white/10 text-white/30">
-                <div className="flex gap-1.5">
-                    <div className="w-3 h-3 rounded-full bg-[#FF5F56] opacity-50 group-hover:opacity-100 transition-opacity" />
-                    <div className="w-3 h-3 rounded-full bg-[#FFBD2E] opacity-50 group-hover:opacity-100 transition-opacity" />
-                    <div className="w-3 h-3 rounded-full bg-[#27C93F] opacity-50 group-hover:opacity-100 transition-opacity" />
-                </div>
-                <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest truncate max-w-[150px]">
-                    <FileCode size={12} /> {title.toLowerCase().replace(/\s+/g, '_')}.tsx
-                </div>
-                <div className="w-12" /> {/* Spacer */}
-            </div>
+          {title}
+        </h3>
 
-            {/* Editor Body */}
-            <div className="p-6 space-y-4 font-mono flex-1 flex flex-col">
-                <div className="space-y-1">
-                    <p className="text-pink-400 text-xs">import <span className="text-white">Project</span> from <span className="text-cyan-400">'@portfolio/work'</span>;</p>
-                    <h3 className="text-xl font-bold text-white group-hover:text-cyan-400 transition-colors uppercase tracking-tighter">
-                        {title}
-                    </h3>
-                </div>
+        <p
+          className="text-sm leading-relaxed flex-1"
+          style={{
+            color: "var(--ink-2)",
+            fontFamily: "var(--font-inter), sans-serif",
+          }}
+        >
+          {description}
+        </p>
 
-                <p className="text-sm text-white/50 leading-relaxed min-h-[60px] flex-1 line-clamp-4">
-                    <span className="text-violet-400 font-bold">const</span> <span className="text-blue-400 font-bold">summary</span> = <span className="text-white">"{description}"</span>;
-                </p>
+        <div className="flex flex-wrap gap-1.5">
+          {tags.map((tag) => (
+            <span
+              key={tag}
+              className="px-2.5 py-1 rounded text-xs"
+              style={{
+                border: "1px solid var(--rule-2)",
+                color: "var(--ink-3)",
+                fontFamily: "var(--font-jetbrains), monospace",
+                fontSize: "var(--text-xs)",
+              }}
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
 
-                {/* Tech Stack Rendering */}
-                <div className="flex flex-wrap gap-2 pt-2">
-                    {tags.map((tag) => (
-                        <span key={tag} className="text-[10px] text-cyan-400/70 bg-cyan-400/5 border border-cyan-400/20 px-2 py-0.5 rounded">
-                            #{tag}
-                        </span>
-                    ))}
-                </div>
+        <div
+          className="flex items-center justify-between pt-4"
+          style={{ borderTop: "1px solid var(--rule)" }}
+        >
+          {!hasRepoUrl && !hasLiveUrl ? (
+            <span
+              className="inline-flex items-center gap-1 text-xs"
+              style={{
+                color: "var(--ink-3)",
+                fontFamily: "var(--font-jetbrains), monospace",
+              }}
+            >
+              <Lock size={10} /> Private
+            </span>
+          ) : (
+            <span
+              className="text-xs font-mono"
+              style={{
+                color: "var(--ink-3)",
+                fontFamily: "var(--font-jetbrains), monospace",
+              }}
+            >
+              {hasLiveUrl ? "Live" : "GitHub"}
+            </span>
+          )}
 
-                {/* Action Buttons */}
-                <div className="flex gap-4 pt-6 border-t border-white/5 mt-auto">
-                    {repoUrl === "PRIVATE" ? (
-                        <span className="flex items-center gap-2 text-[10px] font-bold text-white/20 cursor-not-allowed">
-                            <Github size={14} /> PRIVATE_REPO
-                        </span>
-                    ) : (
-                        <a href={repoUrl} target="_blank" className="flex items-center gap-2 text-[10px] font-bold text-white/40 hover:text-white transition-colors">
-                            <Github size={14} /> REPO_URL
-                        </a>
-                    )}
-                    {liveUrl === "STAGING_ONLY" ? (
-                        <span className="flex items-center gap-2 text-[10px] font-bold text-yellow-500/50 cursor-not-allowed">
-                            <span className="w-2 h-2 rounded-full bg-yellow-500/50 animate-pulse" /> LOCAL_ENV_ONLY
-                        </span>
-                    ) : (
-                        <a href={liveUrl} target="_blank" className="flex items-center gap-2 text-[10px] font-bold text-cyan-400 hover:text-cyan-300 transition-colors">
-                            <ExternalLink size={14} /> EXECUTE_LIVE
-                        </a>
-                    )}
-                </div>
-            </div>
-        </motion.div>
-    );
+          {href ? (
+            <a
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-xs font-medium transition-colors duration-150"
+              style={{
+                color: "var(--ink-2)",
+                fontFamily: "var(--font-inter), sans-serif",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.color = "var(--accent)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.color = "var(--ink-2)";
+              }}
+            >
+              View <ArrowUpRight size={13} />
+            </a>
+          ) : (
+            <span
+              className="text-xs"
+              style={{
+                color: "var(--ink-3)",
+                fontFamily: "var(--font-inter), sans-serif",
+              }}
+            >
+              NDA
+            </span>
+          )}
+        </div>
+      </div>
+    </motion.article>
+  );
 }
